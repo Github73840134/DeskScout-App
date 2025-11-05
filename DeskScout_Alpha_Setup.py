@@ -1,5 +1,6 @@
 import zipimport,zipfile,urllib.request as request,os,sys,json,shutil,subprocess,ctypes
 from tkinter import messagebox
+
 try:
 	os.mkdir(os.path.join(os.environ["temp"],"DeskScout Alpha Installer"))
 
@@ -22,6 +23,7 @@ except Exception as e:
 import PySimpleGUI as sg
 
 layout = [
+	[sg.Text("DeskScout")],
 	[sg.Text("Getting ready to install",key="status")]
 ]
 window = sg.Window("DeskScout Installer",layout,finalize=True,no_titlebar=True)
