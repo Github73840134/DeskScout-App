@@ -1,6 +1,5 @@
-import zipimport,zipfile,urllib.request as request,os,sys,json,shutil,subprocess
+import zipimport,zipfile,urllib.request as request,os,sys,json,shutil,subprocess,ctypes
 from tkinter import messagebox
-
 try:
 	os.mkdir(os.path.join(os.environ["temp"],"DeskScout Alpha Installer"))
 
@@ -34,6 +33,13 @@ try:
 except Exception as e:
 	messagebox.showerror("DeskScout Installer",f"Unable to install DeskScout\n\n{str(e)}\nPhase: 3")
 	exit(0)
+try:
+	os.mkdir(os.path.join(os.environ['HOMEDRIVE'],os.environ['HOMEPATH'],"DeskScout Alpha"))
+except FileExistsError:
+	shutil.rmtree(os.path.join(os.environ["temp"],"DeskScout Alpha Installer"))
+
+	messagebox.showinfo("DeskScout Installer","You already have DeskScout Alpha installed. If you want to update please do so via the app. If your app is corrupted delete the app before installing")
+	exit(0)
 window['status'].update("Downloading DeskScout")
 window.refresh()
 
@@ -48,11 +54,6 @@ except Exception as e:
 	exit(0)
 window['status'].update("Installing DeskScout")
 window.refresh()
-try:
-	os.mkdir(os.path.join(os.environ['HOMEDRIVE'],os.environ['HOMEPATH'],"DeskScout Alpha"))
-except FileExistsError:
-	messagebox.showinfo("DeskScout Installer","You already have DeskScout Alpha installed. If you want to update please do so via the app. If your app is corrupted delete the app before installing")
-	exit(0)
 try:
 	zip = zipfile.ZipFile(os.path.join(os.environ["temp"],"DeskScout Alpha Installer","app.zip"))
 	zip.extractall(os.path.join(os.environ['HOMEDRIVE'],os.environ['HOMEPATH'],"DeskScout Alpha"))
