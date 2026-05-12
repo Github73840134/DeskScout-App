@@ -32,12 +32,12 @@ except Exception as e:
 	exit(0)
 
 import gui as sg
+sg.theme('SystemDefault')
 
 layout = [
-	[sg.Text("DeskScout")],
 	[sg.Text("Getting ready to install",key="status")]
 ]
-window = sg.Window("DeskScout Installer",layout,finalize=True,no_titlebar=True)
+window = sg.Window("DeskScout Installer",layout,finalize=True,disable_close=True)
 window.refresh()
 
 # Get path for the correct binary
@@ -53,10 +53,12 @@ except Exception as e:
 try:
 	os.mkdir(os.path.join(os.environ['HOMEDRIVE'],os.environ['HOMEPATH'],"DeskScout Alpha"))
 except FileExistsError:
-	shutil.rmtree(os.path.join(os.environ["temp"],"DeskScout Alpha Installer"))
+	
 
-	messagebox.showinfo("DeskScout Installer","You already have DeskScout Alpha installed. If you want to update please do so via the app. If your app is corrupted delete the app before installing")
-	exit(0)
+	ans = messagebox.askyesno("DeskScout Installer","You already have DeskScout Alpha installed. Do you want to overwrite?")
+	if not ans:
+		shutil.rmtree(os.path.join(os.environ["temp"],"DeskScout Alpha Installer"))
+		exit(0)
 window['status'].update("Downloading DeskScout")
 window.refresh()
 
