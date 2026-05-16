@@ -18,7 +18,7 @@ except Exception as e:
 	exit(0)
 
 # Add it to the system path
-sys.path.append(os.path.join(os.environ["temp"],"DeskScout"))
+sys.path.append(os.path.join(os.environ["temp"],"DeskScout Installer"))
 
 # Download the UI library
 try:

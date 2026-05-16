@@ -1,6 +1,8 @@
 {
 	"win32":{
-		"alpha":"bin/win32/alpha.zip"
+		"alpha":"bin/win32/alpha.zip",
+		"stable":"bin/win32/stable.zip"
+
 
 	}
 }
