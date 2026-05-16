@@ -1,4 +1,4 @@
-# DeskScout alpha one click installer
+# DeskScout one click installer
 # Author: Seth Edwards 
 # Version 1.0
 
