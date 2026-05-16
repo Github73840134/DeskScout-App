@@ -4,7 +4,7 @@
 
 
 # Imports
-import zipimport,zipfile,urllib.request as request,os,sys,json,shutil,subprocess,ctypes
+import zipimport,zipfile,urllib.request as request,os,sys,json,shutil,subprocess,ctypes,urllib
 from tkinter import messagebox
 def cs(v):
 	if v < 1024:
@@ -36,18 +36,22 @@ try:
 	file.write(resp.read())
 	file.close()
 	import gui as sg
-except Exception as e:
-	messagebox.showerror("DeskScout Installer",f"Unable to install DeskScout\n\n{str(e)}\nPhase: 2")
+except urllib.error.URLError as e:
+	messagebox.showerror("DeskScout Installer",f"Unable to install DeskScout\nReason: No internet connection\n{str(e)}\nPhase: 2")
 	exit(0)
-
+except OSError:
+	messagebox.showerror("DeskScout Installer",f"Unable to install DeskScout\nReason: Filesystem Error\n{str(e)}\nPhase: 2")
+	exit(0)
+except Exception as e:
+	messagebox.showerror("DeskScout Installer",f"Unable to install DeskScout\nReason: Unknown\n{str(e)}\nPhase: 2")
+	exit(0)
 import gui as sg
 sg.theme('SystemDefault')
 
 layout = [
 	[sg.Text("Getting ready to install",key="status")],
-	[sg.Text("",key="status2")],
-
 	[sg.ProgressBar(0,key="prog",size=(20,20))],
+	[sg.Text("",key="status2")]
 
 ]
 window = sg.Window("DeskScout Installer",layout,finalize=True,disable_close=True)
@@ -139,8 +143,6 @@ if resp.returncode != 0:
 	exit(0)
 # Clean up
 shutil.rmtree(os.path.join(os.environ["temp"],"DeskScout Installer"))
-
-
 # Launch app
 subprocess.Popen(f"pyw \"{os.path.join(os.environ['HOMEDRIVE'],os.environ['HOMEPATH'],'DeskScout','app','DeskScout.pyw')}\"",start_new_session=True)
 print("DONE!")
