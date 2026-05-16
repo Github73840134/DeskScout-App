@@ -135,7 +135,7 @@ resp = subprocess.run(f"pyw \"{os.path.join(os.environ['HOMEDRIVE'],os.environ['
 if resp.returncode != 0:
 	shutil.rmtree(os.path.join(os.environ["temp"],"DeskScout Installer"))
 	window.close()
-	messagebox.showerror("DeskScout Installer",f"Unable to install DeskScout\n\n{str(e)}\nPhase: 6")
+	messagebox.showerror("DeskScout Installer",f"Unable to install DeskScout Phase: 6")
 	exit(0)
 # Clean up
 shutil.rmtree(os.path.join(os.environ["temp"],"DeskScout Installer"))
