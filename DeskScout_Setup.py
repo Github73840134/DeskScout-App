@@ -50,7 +50,7 @@ layout = [
 	[sg.ProgressBar(0,key="prog",size=(20,20))],
 
 ]
-window = sg.Window("DeskScout Installer",layout,finalize=True,disable_close=False)
+window = sg.Window("DeskScout Installer",layout,finalize=True,disable_close=True)
 window.refresh()
 
 # Get path for the correct binary
@@ -122,7 +122,7 @@ window['status2'].update(visible=False)
 window['prog'].update(visible=False)
 
 window.refresh()
-
+window.close()
 # Install the installer files
 try:
 	zip = zipfile.ZipFile(os.path.join(os.environ["temp"],"DeskScout Installer","installer.zip"))
@@ -139,7 +139,7 @@ if resp.returncode != 0:
 	exit(0)
 # Clean up
 shutil.rmtree(os.path.join(os.environ["temp"],"DeskScout Installer"))
-window.close()
+
 
 # Launch app
 subprocess.Popen(f"pyw \"{os.path.join(os.environ['HOMEDRIVE'],os.environ['HOMEPATH'],'DeskScout','app','DeskScout.pyw')}\"",start_new_session=True)
