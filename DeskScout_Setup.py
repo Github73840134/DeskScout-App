@@ -6,6 +6,15 @@
 # Imports
 import zipimport,zipfile,urllib.request as request,os,sys,json,shutil,subprocess,ctypes
 from tkinter import messagebox
+def cs(v):
+	if v < 1024:
+		return str(v)+" B"
+	elif v >= 1024 and v < 1_000_024:
+		return str(round(v/1024))+" KB"
+	elif v > 1_000_024  < 1_000_000_024:
+		return str(round(v/1e+6,2))+" MB"
+	elif v >= 1_000_000_024:
+		return str(round(v/1e+9,2))+" GB"
 
 # Create a temporary folder for the installer
 try:
@@ -35,9 +44,13 @@ import gui as sg
 sg.theme('SystemDefault')
 
 layout = [
-	[sg.Text("Getting ready to install",key="status")]
+	[sg.Text("Getting ready to install",key="status")],
+	[sg.Text("",key="status2")],
+
+	[sg.ProgressBar(0,key="prog",size=(20,20))],
+
 ]
-window = sg.Window("DeskScout Installer",layout,finalize=True,disable_close=True)
+window = sg.Window("DeskScout Installer",layout,finalize=True,disable_close=False)
 window.refresh()
 
 # Get path for the correct binary
@@ -59,31 +72,55 @@ except FileExistsError:
 	if not ans:
 		shutil.rmtree(os.path.join(os.environ["temp"],"DeskScout Installer"))
 		exit(0)
-window['status'].update("Downloading DeskScout (1/2)")
+window['status2'].update("Please wait")
 window.refresh()
 
 # Download the installer
+import io
 try:
 	resp = request.urlopen(f"https://raw.githubusercontent.com/Github73840134/DeskScout-App/refs/heads/main/bin/{sys.platform}/installer.zip")
+	length = int(resp.headers.get("Content-Length"))
 	file = open(os.path.join(os.environ["temp"],"DeskScout Installer","installer.zip"),'wb+')
-	file.write(resp.read())
+	while True:
+		x = resp.read(io.DEFAULT_BUFFER_SIZE)
+		file.write(x)
+		if not x:
+			break
+		window['status'].update(f"Downloading DeskScout")
+		window['status2'].update(f"1/2 {round((file.tell()/length)*100)}% ({cs(file.tell())})")
+		window['prog'].UpdateBar(file.tell(),max=length)
+		window.refresh()
+		
 	file.close()
 except Exception as e:
 	messagebox.showerror("DeskScout Installer",f"Unable to install DeskScout\n\n{str(e)}\nPhase: 3")
 	exit(0)
 # Download the zip
-window['status'].update("Downloading DeskScout (2/2)")
+window['status'].update("Downloading DeskScout")
 window.refresh()
 try:
 	resp = request.urlopen(f"https://raw.githubusercontent.com/Github73840134/DeskScout-App/refs/heads/main/{path}")
 	file = open(os.path.join(os.environ["temp"],"DeskScout Installer","app.zip"),'wb+')
-	file.write(resp.read())
+	length = int(resp.headers.get("Content-Length"))
+	while True:
+		x = resp.read(io.DEFAULT_BUFFER_SIZE)
+		file.write(x)
+		if not x:
+			break
+		window['status'].update(f"Downloading DeskScout")
+		window['status2'].update(f"2/2 {round((file.tell()/length)*100)}% ({cs(file.tell())})")
+		window['prog'].UpdateBar(file.tell(),max=length)
+		
+		window.refresh()
 	file.close()
 except Exception as e:
 	messagebox.showerror("DeskScout Installer",f"Unable to install DeskScout\n\n{str(e)}\nPhase: 4")
 	exit(0)
 
 window['status'].update("Installing DeskScout")
+window['status2'].update(visible=False)
+window['prog'].update(visible=False)
+
 window.refresh()
 
 # Install the installer files
