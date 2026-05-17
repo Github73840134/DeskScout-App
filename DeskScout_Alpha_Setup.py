@@ -92,6 +92,34 @@ bps = 0
 # Download the installer
 import io
 try:
+	resp = request.urlopen(f"https://raw.githubusercontent.com/Github73840134/DeskScout-App/refs/heads/main/bin/{sys.platform}/logo.ico")
+	length = int(resp.headers.get("Content-Length"))
+	file = open(os.path.join(os.environ["temp"],f"DeskScout {ptype} Installer","logo.ico"),'wb+')
+	last = time.time()
+	xps = 0
+	while True:
+		x = resp.read(io.DEFAULT_BUFFER_SIZE)
+		file.write(x)
+		if time.time()-last >= 1:
+			bps = xps
+			xps = 0
+			last = time.time()
+		else:
+			xps += len(x)
+			
+		if not x:
+			break
+		window['status'].update(f"Downloading DeskScout")
+		window['status2'].update(f"1/3 {round((file.tell()/length)*100)}% ({cs(file.tell())}) at {cs(bps)}/sec")
+		window['prog'].UpdateBar(file.tell(),max=length)
+		window.refresh()
+		
+	file.close()
+except Exception as e:
+	messagebox.showerror(f"DeskScout {ptype} Installer",f"Unable to install DeskScout\n\n{str(e)}\nPhase: 3")
+	exit(0)
+bps = 0
+try:
 	resp = request.urlopen(f"https://raw.githubusercontent.com/Github73840134/DeskScout-App/refs/heads/main/bin/{sys.platform}/installer.zip")
 	length = int(resp.headers.get("Content-Length"))
 	file = open(os.path.join(os.environ["temp"],f"DeskScout {ptype} Installer","installer.zip"),'wb+')
@@ -110,7 +138,7 @@ try:
 		if not x:
 			break
 		window['status'].update(f"Downloading DeskScout")
-		window['status2'].update(f"1/2 {round((file.tell()/length)*100)}% ({cs(file.tell())}) at {cs(bps)}/sec")
+		window['status2'].update(f"2/3 {round((file.tell()/length)*100)}% ({cs(file.tell())}) at {cs(bps)}/sec")
 		window['prog'].UpdateBar(file.tell(),max=length)
 		window.refresh()
 		
@@ -139,7 +167,7 @@ try:
 		if not x:
 			break
 		window['status'].update(f"Downloading DeskScout")
-		window['status2'].update(f"2/2 {round((file.tell()/length)*100)}% ({cs(file.tell())}) at {cs(bps)}/sec")
+		window['status2'].update(f"3/3 {round((file.tell()/length)*100)}% ({cs(file.tell())}) at {cs(bps)}/sec")
 		window['prog'].UpdateBar(file.tell(),max=length)
 		
 		window.refresh()
@@ -168,6 +196,59 @@ if resp.returncode != 0:
 	window.close()
 	messagebox.showerror(f"DeskScout {ptype} Installer",f"Unable to install DeskScout Phase: 6")
 	exit(0)
+shutil.copy(os.path.join(os.environ["temp"],f"DeskScout {ptype} Installer","logo.ico"),
+			os.path.join(os.environ['HOMEDRIVE'],os.environ['HOMEPATH'],f'DeskScout {ptype}',"assets","shortcut.ico"))
+import subprocess
+import sys
+import os
+
+# Get actual desktop path (supports OneDrive)
+desktop = subprocess.check_output(
+    [
+        "powershell",
+        "-NoProfile",
+        "-Command",
+        "[Environment]::GetFolderPath('Desktop')"
+    ],
+    text=True
+).strip()
+
+shortcut = os.path.join(desktop, f"DeskScout {ptype}.lnk")
+
+script = os.path.join(os.environ['HOMEDRIVE'],os.environ['HOMEPATH'],f'DeskScout {ptype}','app')
+
+# Your icon file (.ico recommended)
+icon = os.path.join(os.environ['HOMEDRIVE'],os.environ['HOMEPATH'],f'DeskScout {ptype}',"assets","shortcut.ico")
+
+pythonw = os.path.join(
+    os.path.dirname(sys.executable),
+    "pythonw.exe"
+)
+
+arguments = os.path.join(os.environ['HOMEDRIVE'],os.environ['HOMEPATH'],f'DeskScout {ptype}','app','DeskScout.pyw')
+
+powershell_script = f'''
+$WshShell = New-Object -ComObject WScript.Shell
+$Shortcut = $WshShell.CreateShortcut("{shortcut}")
+
+$Shortcut.TargetPath = "{pythonw}"
+$Shortcut.Arguments = '"{arguments}"'
+$Shortcut.WorkingDirectory = "{os.path.dirname(script)}"
+
+# Set icon
+$Shortcut.IconLocation = "{icon}"
+
+$Shortcut.Description = "DeskScout"
+
+$Shortcut.Save()
+'''
+
+subprocess.run(
+    ["powershell", "-Command", powershell_script],
+    check=True
+)
+
+print("Shortcut created!")
 # Clean up
 shutil.rmtree(os.path.join(os.environ["temp"],f"DeskScout {ptype} Installer"))
 # Launch app
