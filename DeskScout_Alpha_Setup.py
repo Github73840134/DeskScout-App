@@ -2,7 +2,8 @@
 # Author: Seth Edwards 
 # Version 1.0
 
-
+print("DeskScout One-Click Installer")
+print("Getting ready to install")
 # Imports
 import zipimport,zipfile,urllib.request as request,os,sys,json,shutil,subprocess,ctypes,urllib,time
 from tkinter import messagebox
@@ -19,6 +20,8 @@ def cs(v):
 
 # Create a temporary folder for the installer
 try:
+	print("Creating temporary directory")
+
 	os.mkdir(os.path.join(os.environ["temp"],f"DeskScout {ptype} Installer"))
 
 except FileExistsError:
@@ -32,11 +35,14 @@ sys.path.append(os.path.join(os.environ["temp"],f"DeskScout {ptype} Installer"))
 
 # Download the UI library
 try:
+	print("Downloading UI Toolkit")
+	print("Requesting https://raw.githubusercontent.com/Github73840134/DeskScout-App/refs/heads/main/mods/gui.py")
 	resp = request.urlopen("https://raw.githubusercontent.com/Github73840134/DeskScout-App/refs/heads/main/mods/gui.py")
 	file = open(os.path.join(os.environ["temp"],f"DeskScout {ptype} Installer","gui.py"),'wb+')
 	file.write(resp.read())
 	file.close()
 	import gui as sg
+	print("Success!")
 except urllib.error.URLError as e:
 	messagebox.showerror(f"DeskScout {ptype} Installer",f"Unable to install DeskScout\nReason: No internet connection\n{str(e)}\nPhase: 2")
 	exit(0)
@@ -57,6 +63,7 @@ layout = [
 ]
 window = sg.Window(f"DeskScout {ptype} Installer",layout,finalize=True,disable_close=True)
 window.refresh()
+print("\u001b[2J\u001b[0;0HFollow the prompts on the window appearing shortly or press CTRL+C here to cancel")
 
 # Get path for the correct binary
 try:
@@ -78,7 +85,7 @@ except FileExistsError:
 		shutil.rmtree(os.path.join(os.environ["temp"],f"DeskScout {ptype} Installer"))
 		exit(0)
 	shutil.rmtree(os.path.join(os.environ['HOMEDRIVE'],os.environ['HOMEPATH'],"DeskScout"))
-	os.mkdir(os.path.join(os.environ['HOMEDRIVE'],os.environ['HOMEPATH'],"DeskScout"))
+	os.mkdir(os.path.join(os.environ['HOMEDRIVE'],os.environ['HOMEPATH'],f"DeskScout"))
 window['status2'].update("Please wait")
 window.refresh()
 bps = 0
@@ -150,12 +157,12 @@ window.close()
 # Install the installer files
 try:
 	zip = zipfile.ZipFile(os.path.join(os.environ["temp"],f"DeskScout {ptype} Installer","installer.zip"))
-	zip.extractall(os.path.join(os.environ['HOMEDRIVE'],os.environ['HOMEPATH'],"DeskScout"))
+	zip.extractall(os.path.join(os.environ['HOMEDRIVE'],os.environ['HOMEPATH'],f"DeskScout {ptype}"))
 	zip.close()
 except Exception as e:
 	messagebox.showerror(f"DeskScout {ptype} Installer",f"Unable to install DeskScout\n\n{str(e)}\nPhase: 5")
 	exit(0)
-resp = subprocess.run(f"pyw \"{os.path.join(os.environ['HOMEDRIVE'],os.environ['HOMEPATH'],'DeskScout','app','updater.py')}\" -file \"{os.path.join(os.environ["temp"],f"DeskScout {ptype} Installer","app.zip")}\"",shell=True)
+resp = subprocess.run(f"pyw \"{os.path.join(os.environ['HOMEDRIVE'],os.environ['HOMEPATH'],f"DeskScout {ptype}",'app','updater.py')}\" -file \"{os.path.join(os.environ["temp"],f"DeskScout {ptype} Installer","app.zip")}\"",shell=True)
 if resp.returncode != 0:
 	shutil.rmtree(os.path.join(os.environ["temp"],f"DeskScout {ptype} Installer"))
 	window.close()
@@ -164,5 +171,5 @@ if resp.returncode != 0:
 # Clean up
 shutil.rmtree(os.path.join(os.environ["temp"],f"DeskScout {ptype} Installer"))
 # Launch app
-subprocess.Popen(f"pyw \"{os.path.join(os.environ['HOMEDRIVE'],os.environ['HOMEPATH'],'DeskScout','app','DeskScout.pyw')}\"",start_new_session=True)
-print("DONE!")
+if messagebox.askyesno(f"DeskSccout {ptype} Installer","DeskScout was installed successfully!\nDo you want to launch the app?"):
+	subprocess.Popen(f"pyw \"{os.path.join(os.environ['HOMEDRIVE'],os.environ['HOMEPATH'],f"DeskScout {ptype}",'app','DeskScout.pyw')}\"",start_new_session=True)
