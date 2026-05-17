@@ -76,6 +76,8 @@ except FileExistsError:
 	if not ans:
 		shutil.rmtree(os.path.join(os.environ["temp"],"DeskScout Installer"))
 		exit(0)
+	shutil.rmtree(os.path.join(os.environ['HOMEDRIVE'],os.environ['HOMEPATH'],"DeskScout"))
+	os.mkdir(os.path.join(os.environ['HOMEDRIVE'],os.environ['HOMEPATH'],"DeskScout"))
 window['status2'].update("Please wait")
 window.refresh()
 
