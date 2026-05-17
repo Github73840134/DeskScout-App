@@ -4,7 +4,7 @@
 
 
 # Imports
-import zipimport,zipfile,urllib.request as request,os,sys,json,shutil,subprocess,ctypes,urllib
+import zipimport,zipfile,urllib.request as request,os,sys,json,shutil,subprocess,ctypes,urllib,time
 from tkinter import messagebox
 ptype = "Alpha" #Blank for stable
 def cs(v):
@@ -81,20 +81,29 @@ except FileExistsError:
 	os.mkdir(os.path.join(os.environ['HOMEDRIVE'],os.environ['HOMEPATH'],"DeskScout"))
 window['status2'].update("Please wait")
 window.refresh()
-
+bps = 0
 # Download the installer
 import io
 try:
 	resp = request.urlopen(f"https://raw.githubusercontent.com/Github73840134/DeskScout-App/refs/heads/main/bin/{sys.platform}/installer.zip")
 	length = int(resp.headers.get("Content-Length"))
 	file = open(os.path.join(os.environ["temp"],f"DeskScout {ptype} Installer","installer.zip"),'wb+')
+	last = time.time()
+	xps = 0
 	while True:
 		x = resp.read(io.DEFAULT_BUFFER_SIZE)
 		file.write(x)
+		if time.time()-last >= 1:
+			bps = xps
+			xps = 0
+			last = time.time()
+		else:
+			xps += len(x)
+			
 		if not x:
 			break
 		window['status'].update(f"Downloading DeskScout")
-		window['status2'].update(f"1/2 {round((file.tell()/length)*100)}% ({cs(file.tell())})")
+		window['status2'].update(f"1/2 {round((file.tell()/length)*100)}% ({cs(file.tell())}) at {cs(bps)}/sec")
 		window['prog'].UpdateBar(file.tell(),max=length)
 		window.refresh()
 		
@@ -109,13 +118,21 @@ try:
 	resp = request.urlopen(f"https://raw.githubusercontent.com/Github73840134/DeskScout-App/refs/heads/main/{path}")
 	file = open(os.path.join(os.environ["temp"],f"DeskScout {ptype} Installer","app.zip"),'wb+')
 	length = int(resp.headers.get("Content-Length"))
+	xps = 0
 	while True:
 		x = resp.read(io.DEFAULT_BUFFER_SIZE)
 		file.write(x)
+		if time.time()-last >= 1:
+			bps = xps
+			xps = 0
+			last = time.time()
+		else:
+			xps += len(x)
+			
 		if not x:
 			break
 		window['status'].update(f"Downloading DeskScout")
-		window['status2'].update(f"2/2 {round((file.tell()/length)*100)}% ({cs(file.tell())})")
+		window['status2'].update(f"2/2 {round((file.tell()/length)*100)}% ({cs(file.tell())}) at {cs(bps)}/sec")
 		window['prog'].UpdateBar(file.tell(),max=length)
 		
 		window.refresh()

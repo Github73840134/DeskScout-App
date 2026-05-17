@@ -4,7 +4,7 @@
 
 
 # Imports
-import zipimport,zipfile,urllib.request as request,os,sys,json,shutil,subprocess,ctypes,urllib
+import zipimport,zipfile,urllib.request as request,os,sys,json,shutil,subprocess,ctypes,urllib,time
 from tkinter import messagebox
 def cs(v):
 	if v < 1024:
@@ -83,17 +83,27 @@ window.refresh()
 
 # Download the installer
 import io
+bps = 0
 try:
 	resp = request.urlopen(f"https://raw.githubusercontent.com/Github73840134/DeskScout-App/refs/heads/main/bin/{sys.platform}/installer.zip")
 	length = int(resp.headers.get("Content-Length"))
 	file = open(os.path.join(os.environ["temp"],"DeskScout Installer","installer.zip"),'wb+')
+	last = time.time()
+	xps = 0
 	while True:
 		x = resp.read(io.DEFAULT_BUFFER_SIZE)
 		file.write(x)
+		if time.time()-last >= 1:
+			bps = xps
+			xps = 0
+			last = time.time()
+		else:
+			xps += len(x)
+			
 		if not x:
 			break
 		window['status'].update(f"Downloading DeskScout")
-		window['status2'].update(f"1/2 {round((file.tell()/length)*100)}% ({cs(file.tell())})")
+		window['status2'].update(f"1/2 {round((file.tell()/length)*100)}% ({cs(file.tell())}) at {cs(bps)}/sec")
 		window['prog'].UpdateBar(file.tell(),max=length)
 		window.refresh()
 		
@@ -108,15 +118,23 @@ try:
 	resp = request.urlopen(f"https://raw.githubusercontent.com/Github73840134/DeskScout-App/refs/heads/main/{path}")
 	file = open(os.path.join(os.environ["temp"],"DeskScout Installer","app.zip"),'wb+')
 	length = int(resp.headers.get("Content-Length"))
+	last = time.time()
+	xps = 0
 	while True:
 		x = resp.read(io.DEFAULT_BUFFER_SIZE)
 		file.write(x)
+		if time.time()-last >= 1:
+			bps = xps
+			xps = 0
+			last = time.time()
+		else:
+			xps += len(x)
+			
 		if not x:
 			break
 		window['status'].update(f"Downloading DeskScout")
-		window['status2'].update(f"2/2 {round((file.tell()/length)*100)}% ({cs(file.tell())})")
+		window['status2'].update(f"2/2 {round((file.tell()/length)*100)}% ({cs(file.tell())}) at {cs(bps)}/sec")
 		window['prog'].UpdateBar(file.tell(),max=length)
-		
 		window.refresh()
 	file.close()
 except Exception as e:
