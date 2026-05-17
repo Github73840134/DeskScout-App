@@ -71,7 +71,7 @@ try:
 	path = json.loads(resp.read())[sys.platform][ptype.lower()]
 	
 except Exception as e:
-	messagebox.showerror(f"DeskScout {ptype}Installer",f"Unable to install DeskScout\n\n{str(e)}\nPhase: 3")
+	messagebox.showerror(f"DeskScout {ptype} Installer",f"Unable to install DeskScout\n\n{str(e)}\nPhase: 3")
 	exit(0)
 
 # Create the apps directors
@@ -109,7 +109,7 @@ try:
 			
 		if not x:
 			break
-		window['status'].update(f"Downloading DeskScout")
+		window['status'].update(f"Downloading DeskScout {ptype}")
 		window['status2'].update(f"1/3 {round((file.tell()/length)*100)}% ({cs(file.tell())}) at {cs(bps)}/sec")
 		window['prog'].UpdateBar(file.tell(),max=length)
 		window.refresh()
@@ -137,7 +137,7 @@ try:
 			
 		if not x:
 			break
-		window['status'].update(f"Downloading DeskScout")
+		window['status'].update(f"Downloading DeskScout {ptype}")
 		window['status2'].update(f"2/3 {round((file.tell()/length)*100)}% ({cs(file.tell())}) at {cs(bps)}/sec")
 		window['prog'].UpdateBar(file.tell(),max=length)
 		window.refresh()
@@ -147,7 +147,7 @@ except Exception as e:
 	messagebox.showerror(f"DeskScout {ptype} Installer",f"Unable to install DeskScout\n\n{str(e)}\nPhase: 3")
 	exit(0)
 # Download the zip
-window['status'].update("Downloading DeskScout")
+window['status'].update(f"Downloading DeskScout {ptype}")
 window.refresh()
 try:
 	resp = request.urlopen(f"https://raw.githubusercontent.com/Github73840134/DeskScout-App/refs/heads/main/{path}")
@@ -166,7 +166,7 @@ try:
 			
 		if not x:
 			break
-		window['status'].update(f"Downloading DeskScout")
+		window['status'].update(f"Downloading DeskScout {ptype}")
 		window['status2'].update(f"3/3 {round((file.tell()/length)*100)}% ({cs(file.tell())}) at {cs(bps)}/sec")
 		window['prog'].UpdateBar(file.tell(),max=length)
 		
@@ -176,7 +176,7 @@ except Exception as e:
 	messagebox.showerror(f"DeskScout {ptype} Installer",f"Unable to install DeskScout\n\n{str(e)}\nPhase: 4")
 	exit(0)
 
-window['status'].update("Installing DeskScout")
+window['status'].update(f"Installing DeskScout {ptype}")
 window['status2'].update(visible=False)
 window['prog'].update(visible=False)
 
@@ -188,13 +188,13 @@ try:
 	zip.extractall(os.path.join(os.environ['HOMEDRIVE'],os.environ['HOMEPATH'],f"DeskScout {ptype}"))
 	zip.close()
 except Exception as e:
-	messagebox.showerror(f"DeskScout {ptype} Installer",f"Unable to install DeskScout\n\n{str(e)}\nPhase: 5")
+	messagebox.showerror(f"DeskScout {ptype} Installer",f"Unable to install DeskScout {ptype}\n\n{str(e)}\nPhase: 5")
 	exit(0)
 resp = subprocess.run(f"pyw \"{os.path.join(os.environ['HOMEDRIVE'],os.environ['HOMEPATH'],f"DeskScout {ptype}",'app','updater.py')}\" -file \"{os.path.join(os.environ["temp"],f"DeskScout {ptype} Installer","app.zip")}\"",shell=True)
 if resp.returncode != 0:
 	shutil.rmtree(os.path.join(os.environ["temp"],f"DeskScout {ptype} Installer"))
 	window.close()
-	messagebox.showerror(f"DeskScout {ptype} Installer",f"Unable to install DeskScout Phase: 6")
+	messagebox.showerror(f"DeskScout {ptype} Installer",f"Unable to install DeskScout {ptype} Phase: 6")
 	exit(0)
 shutil.copy(os.path.join(os.environ["temp"],f"DeskScout {ptype} Installer","logo.ico"),
 			os.path.join(os.environ['HOMEDRIVE'],os.environ['HOMEPATH'],f'DeskScout {ptype}',"assets","shortcut.ico"))
