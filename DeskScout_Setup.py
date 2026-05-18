@@ -221,10 +221,7 @@ script = os.path.join(os.environ['HOMEDRIVE'],os.environ['HOMEPATH'],'DeskScout'
 # Your icon file (.ico recommended)
 icon = os.path.join(os.environ['HOMEDRIVE'],os.environ['HOMEPATH'],'DeskScout',"assets","shortcut.ico")
 
-pythonw = os.path.join(
-    os.path.dirname(sys.executable),
-    "pythonw.exe"
-)
+pythonw = os.path.join(os.environ['HOMEDRIVE'],os.environ['HOMEPATH'],'DeskScout','core',"pythonw.exe")
 
 arguments = os.path.join(os.environ['HOMEDRIVE'],os.environ['HOMEPATH'],'DeskScout','app','DeskScout.pyw')
 
@@ -254,5 +251,5 @@ print("Shortcut created!")
 shutil.rmtree(os.path.join(os.environ["temp"],"DeskScout Installer"))
 # Launch app
 if messagebox.askyesno("DeskSccout Installer","DeskScout was installed successfully!\nDo you want to launch the app?"):
-	subprocess.Popen(f"pyw \"{os.path.join(os.environ['HOMEDRIVE'],os.environ['HOMEPATH'],'DeskScout','app','DeskScout.pyw')}\"",start_new_session=True)
+	subprocess.Popen(f"{os.path.join(os.environ['HOMEDRIVE'],os.environ['HOMEPATH'],'DeskScout','core',"pythonw.exe")} \"{os.path.join(os.environ['HOMEDRIVE'],os.environ['HOMEPATH'],'DeskScout','app','DeskScout.pyw')}\"",start_new_session=True)
 print("DONE!")
