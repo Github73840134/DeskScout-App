@@ -80,7 +80,7 @@ try:
 except FileExistsError:
 	
 
-	ans = messagebox.askyesno("DeskScout Installer","You already have DeskScout installed. Do you want to overwrite?")
+	ans = messagebox.askyesno("DeskScout Installer","You already have DeskScout installed. Do you want to overwrite?\nYour data will not be saved if you do")
 	if not ans:
 		shutil.rmtree(os.path.join(os.environ["temp"],"DeskScout Installer"))
 		exit(0)
